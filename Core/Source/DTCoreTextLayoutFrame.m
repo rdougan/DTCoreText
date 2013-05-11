@@ -25,8 +25,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	
 	int _numberLinesFitInFrame;
 	DTCoreTextLayoutFrameTextBlockHandler _textBlockHandler;
-	
-	CGFloat _longestLayoutLineWidth;
 }
 
 @synthesize numberOfLines = _numberOfLines;
@@ -107,7 +105,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 }
 
 #pragma mark Building the Lines
-/* 
+/*
  Builds the array of lines with the internal typesetter of our framesetter. No need to correct line origins in this case because they are placed correctly in the first place. This version supports text boxes.
  */
 - (void)_buildLinesWithTypesetter
@@ -134,7 +132,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	NSUInteger maxIndex = NSMaxRange(_requestedStringRange);
 	NSUInteger fittingLength = 0;
 	
-	typedef struct 
+	typedef struct
 	{
 		CGFloat ascent;
 		CGFloat descent;
@@ -158,9 +156,9 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	DTTextBlock *currentTextBlock = nil;
 	DTTextBlock *previousTextBlock = nil;
 	
-	do 
+	do
 	{
-		while (lineRange.location >= (currentParagraphRange.location+currentParagraphRange.length)) 
+		while (lineRange.location >= (currentParagraphRange.location+currentParagraphRange.length))
 		{
 			// we are outside of this paragraph, so we go to the next
 			[paragraphRanges removeObjectAtIndex:0];
@@ -235,7 +233,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		}
 		
 		BOOL truncateLine = ((self.numberOfLines>0 && [typesetLines count]+1==self.numberOfLines) ||
-							 (_numberLinesFitInFrame>0 && _numberLinesFitInFrame==[typesetLines count]+1));
+                         (_numberLinesFitInFrame>0 && _numberLinesFitInFrame==[typesetLines count]+1));
 		CTLineRef line;
 		if(!truncateLine)
 		{
@@ -247,10 +245,10 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			NSRange oldLineRange = lineRange;
 			lineRange.length = maxIndex-lineRange.location;
 			line = CTTypesetterCreateLine(typesetter, CFRangeMake(lineRange.location, lineRange.length));
-
+      
 			// convert lineBreakMode to CoreText type
 			CTLineTruncationType truncationType = DTCTLineTruncationTypeFromNSLineBreakMode(self.lineBreakMode);
-
+      
 			NSAttributedString * attribStr = self.truncationString;
 			if(attribStr == nil)
 			{
@@ -330,7 +328,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				lineHeight += currentLineMetrics.leading;
 			}
 		}
-		else 
+		else
 		{
 			// on the first line the maximum line height is the ascender of an attachment if there is any
 			
@@ -410,7 +408,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		
 		BOOL isRTL = NO;
 		
-		switch (textAlignment) 
+		switch (textAlignment)
 		{
 			case kCTLeftTextAlignment:
 			{
@@ -454,11 +452,11 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			case kCTJustifiedTextAlignment:
 			{
 				BOOL isAtEndOfParagraph    = (currentParagraphRange.location+currentParagraphRange.length <= lineRange.location+lineRange.length || 		// JTL 28/June/2012
-					[[_attributedStringFragment string] characterAtIndex:lineRange.location+lineRange.length-1]==0x2028);									// JTL 28/June/2012
-
+                                      [[_attributedStringFragment string] characterAtIndex:lineRange.location+lineRange.length-1]==0x2028);									// JTL 28/June/2012
+        
 				// only justify if not last line, not <br>, and if the line width is longer than 60% of the frame
 				// avoids over-stretching
-				if( !isAtEndOfParagraph && (currentLineMetrics.width > 0.60 * _frame.size.width) ) 
+				if( !isAtEndOfParagraph && (currentLineMetrics.width > 0.60 * _frame.size.width) )
 				{
 					// create a justified line and replace the current one with it
 					CTLineRef justifiedLine = CTLineCreateJustifiedLine(line, 1.0f, availableSpace);
@@ -527,8 +525,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		}
 		
 		previousLine = newLine;
-	//previousLineMetrics = currentLineMetrics;
-	} 
+    //previousLineMetrics = currentLineMetrics;
+	}
 	while (lineRange.location < maxIndex);
 	
 	_lines = typesetLines;
@@ -600,11 +598,11 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	// line origins are wrong on last line of paragraphs
 	//[self _correctLineOrigins];
 	
-//	// --- begin workaround for image squishing bug in iOS < 4.2
-//	if ([DTVersion osVersionIsLessThen:@"4.2"])
-//	{
-//		[self _correctAttachmentHeights];
-//	}
+  //	// --- begin workaround for image squishing bug in iOS < 4.2
+  //	if ([DTVersion osVersionIsLessThen:@"4.2"])
+  //	{
+  //		[self _correctAttachmentHeights];
+  //	}
 }
 
 - (void)_buildLines
@@ -654,7 +652,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		{
 			break;
 		}
-
+    
 		// CGRectIntersectsRect returns false if the frame has 0 width, which
 		// lines that consist only of line-breaks have. Set the min-width
 		// to one to work-around.
@@ -716,7 +714,6 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		scaleFactor = [[UIScreen mainScreen] scale];
 	}
 	
-	
 	// workaround for scale 1: strangely offset (1,1) with blur 0 does not draw any shadow, (1.01,1.01) does
 	if (scaleFactor==1.0)
 	{
@@ -730,8 +727,12 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 			offset.height *= 1.50;
 		}
 	}
+  
+  // Move the shadow 10000px to the left so the shadow is visible after moving the text position 10000 to the right
+  offset.width -= 10000;
 	
 	CGContextSetShadowWithColor(context, offset, blur, color.CGColor);
+  CGContextSetFillColorWithColor(context, color.CGColor);
 }
 
 - (CGRect)_frameForTextBlock:(DTTextBlock *)textBlock atIndex:(NSUInteger)location
@@ -834,7 +835,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	if (_DTCoreTextLayoutFramesShouldDrawDebugFrames)
 	{
 		CGContextSaveGState(context);
-
+    
 		// stroke the frame because the layout frame might be open ended
 		CGContextSaveGState(context);
 		CGFloat dashes[] = {10.0, 2.0};
@@ -872,50 +873,50 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	
 	// enumerate all text blocks in this range
 	[_attributedStringFragment enumerateAttribute:DTTextBlocksAttribute inRange:_stringRange options:0
-									   usingBlock:^(NSArray *blockArray, NSRange range, BOOL *stop) {
-										   for (DTTextBlock *oneBlock in blockArray)
-										   {
-											   // make sure we only handle it once
-											   if (![handledBlocks containsObject:oneBlock])
-											   {
-												   CGRect frame = [self _frameForTextBlock:oneBlock atIndex:range.location];
-												   
-												   BOOL shouldDrawStandardBackground = YES;
-												   if (_textBlockHandler)
-												   {
-													   _textBlockHandler(oneBlock, frame, context, &shouldDrawStandardBackground);
-												   }
-												   
-												   // draw standard background if necessary
-												   if (shouldDrawStandardBackground)
-												   {
-													   if (oneBlock.backgroundColor)
-													   {
-														   CGColorRef color = [oneBlock.backgroundColor CGColor];
-														   CGContextSetFillColorWithColor(context, color);
-														   CGContextFillRect(context, frame);
-													   }
-												   }
-												   
-												   if (_DTCoreTextLayoutFramesShouldDrawDebugFrames)
-												   {
-													   CGContextSaveGState(context);
-													   
-													   // draw line bounds
-													   CGContextSetRGBStrokeColor(context, 0.5, 0, 0.5f, 1.0f);
-													   CGContextSetLineWidth(context, 2);
-													   CGContextStrokeRect(context, CGRectInset(frame, 2, 2));
-													   
-													   CGContextRestoreGState(context);
-												   }
-												   
-												   [handledBlocks addObject:oneBlock];
-											   }
-										   }
-										   
-										   
-									   }];
-
+                                     usingBlock:^(NSArray *blockArray, NSRange range, BOOL *stop) {
+                                       for (DTTextBlock *oneBlock in blockArray)
+                                       {
+                                         // make sure we only handle it once
+                                         if (![handledBlocks containsObject:oneBlock])
+                                         {
+                                           CGRect frame = [self _frameForTextBlock:oneBlock atIndex:range.location];
+                                           
+                                           BOOL shouldDrawStandardBackground = YES;
+                                           if (_textBlockHandler)
+                                           {
+                                             _textBlockHandler(oneBlock, frame, context, &shouldDrawStandardBackground);
+                                           }
+                                           
+                                           // draw standard background if necessary
+                                           if (shouldDrawStandardBackground)
+                                           {
+                                             if (oneBlock.backgroundColor)
+                                             {
+                                               CGColorRef color = [oneBlock.backgroundColor CGColor];
+                                               CGContextSetFillColorWithColor(context, color);
+                                               CGContextFillRect(context, frame);
+                                             }
+                                           }
+                                           
+                                           if (_DTCoreTextLayoutFramesShouldDrawDebugFrames)
+                                           {
+                                             CGContextSaveGState(context);
+                                             
+                                             // draw line bounds
+                                             CGContextSetRGBStrokeColor(context, 0.5, 0, 0.5f, 1.0f);
+                                             CGContextSetLineWidth(context, 2);
+                                             CGContextStrokeRect(context, CGRectInset(frame, 2, 2));
+                                             
+                                             CGContextRestoreGState(context);
+                                           }
+                                           
+                                           [handledBlocks addObject:oneBlock];
+                                         }
+                                       }
+                                       
+                                       
+                                     }];
+  
 	
 	
 	for (DTCoreTextLayoutLine *oneLine in visibleLines)
@@ -953,7 +954,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				{
 					CGContextSetRGBFillColor(context, 1, 0, 0, 0.2f);
 				}
-				else 
+				else
 				{
 					CGContextSetRGBFillColor(context, 0, 1, 0, 0.2f);
 				}
@@ -1020,18 +1021,18 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				
 				NSInteger superscriptStyle = [[oneRun.attributes objectForKey:(id)kCTSuperscriptAttributeName] integerValue];
 				
-				switch (superscriptStyle) 
+				switch (superscriptStyle)
 				{
 					case 1:
 					{
 						runStrokeBounds.origin.y -= oneRun.ascent * 0.47f;
 						break;
-					}	
+					}
 					case -1:
 					{
 						runStrokeBounds.origin.y += oneRun.ascent * 0.25f;
 						break;
-					}	
+					}
 					default:
 						break;
 				}
@@ -1136,16 +1137,19 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 				
 				if (shadows)
 				{
-					CGContextSaveGState(context);
+          CGContextSaveGState(context);
+          
+          // Move the text 10000pt away from the current position so that on the shadow is visisble
+          CGContextSetTextPosition(context, textPosition.x + 10000, textPosition.y);
 					
 					for (NSDictionary *shadowDict in shadows)
 					{
 						[self _setShadowInContext:context fromDictionary:shadowDict];
 						
-						// draw once per shadow
 						[oneRun drawInContext:context];
 					}
-					
+          
+          CGContextSetTextPosition(context, textPosition.x, textPosition.y);
 					CGContextRestoreGState(context);
 				}
 				
@@ -1215,11 +1219,11 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	return _stringRange;
 }
 
-- (NSArray *)stringIndices 
+- (NSArray *)stringIndices
 {
 	NSMutableArray *array = [NSMutableArray arrayWithCapacity:[self.lines count]];
 	
-	for (DTCoreTextLayoutLine *oneLine in self.lines) 
+	for (DTCoreTextLayoutLine *oneLine in self.lines)
 	{
 		[array addObjectsFromArray:[oneLine stringIndices]];
 	}
@@ -1237,7 +1241,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		{
 			index -= count;
 		}
-		else 
+		else
 		{
 			return retIndex;
 		}
@@ -1257,7 +1261,7 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 		{
 			index -= count;
 		}
-		else 
+		else
 		{
 			return [oneLine frameOfGlyphAtIndex:index];
 		}
@@ -1282,46 +1286,11 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	{
 		// actual frame is spanned between first and last lines
 		DTCoreTextLayoutLine *lastLine = [_lines lastObject];
-	
+    
 		_frame.size.height = ceilf((CGRectGetMaxY(lastLine.frame) - _frame.origin.y + 1.5f + _additionalPaddingAtBottom));
 	}
 	
 	return _frame;
-}
-
-- (CGRect)intrinsicContentFrame
-{
-	if (!_lines)
-	{
-		[self _buildLines];
-	}
-	
-	if (![self.lines count])
-	{
-		return CGRectZero;
-	}
-	
-	DTCoreTextLayoutLine *firstLine = [_lines objectAtIndex:0];
-	
-	CGRect outerFrame = self.frame;
-	
-	CGRect frameOverAllLines = firstLine.frame;
-	
-	// move up to frame origin because first line usually does not go all the ways up
-	frameOverAllLines.origin.y = outerFrame.origin.y;
-	
-	for (DTCoreTextLayoutLine *oneLine in _lines)
-	{
-		// need to limit frame to outer frame, otherwise HR causes too long lines
-		CGRect frame = CGRectIntersection(oneLine.frame, outerFrame);
-		
-		frameOverAllLines = CGRectUnion(frame, frameOverAllLines);
-	}
-	
-	// extend height same method as frame
-	frameOverAllLines.size.height = ceilf(frameOverAllLines.size.height + 1.5f + _additionalPaddingAtBottom);
-	
-	return CGRectIntegral(frameOverAllLines);
 }
 
 - (DTCoreTextLayoutLine *)lineContainingIndex:(NSUInteger)index
@@ -1417,8 +1386,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	NSInteger lineStartIndex = line.stringRange.location;
 	
 	CTParagraphStyleRef lineParagraphStyle = (__bridge CTParagraphStyleRef)[_attributedStringFragment
-																									attribute:(id)kCTParagraphStyleAttributeName
-																									atIndex:lineStartIndex effectiveRange:NULL];
+                                                                          attribute:(id)kCTParagraphStyleAttributeName
+                                                                          atIndex:lineStartIndex effectiveRange:NULL];
 	
 	//Meet the first line in this frame
 	if (!previousLine)
@@ -1494,8 +1463,8 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 	{
 		// need to get paragraph spacing
 		CTParagraphStyleRef previousLineParagraphStyle = (__bridge CTParagraphStyleRef)[_attributedStringFragment
-																												  attribute:(id)kCTParagraphStyleAttributeName
-																												  atIndex:previousLine.stringRange.location effectiveRange:NULL];
+                                                                                    attribute:(id)kCTParagraphStyleAttributeName
+                                                                                    atIndex:previousLine.stringRange.location effectiveRange:NULL];
 		
 		// Paragraph spacings are paragraph styles and should not be multiplied by kCTParagraphStyleSpecifierLineHeightMultiple
 		// So directly add them to lineOrigin.y
@@ -1603,31 +1572,31 @@ static BOOL _DTCoreTextLayoutFramesShouldDrawDebugFrames = NO;
 
 #pragma mark Corrections
 /**
-- (void)_correctAttachmentHeights
-{
-	CGFloat downShiftSoFar = 0;
-	
-	for (DTCoreTextLayoutLine *oneLine in self.lines)
-	{
-		CGFloat lineShift = 0;
-		if ([oneLine correctAttachmentHeights:&lineShift])
-		{
-			downShiftSoFar += lineShift;
-		}
-		
-		if (downShiftSoFar>0)
-		{
-			// shift the frame baseline down for the total shift so far
-			CGPoint origin = oneLine.baselineOrigin;
-			origin.y += downShiftSoFar;
-			oneLine.baselineOrigin = origin;
-			
-			// increase the ascent by the extend needed for this lines attachments
-			oneLine.ascent += lineShift;
-		}
-	}
-}
-*/
+ - (void)_correctAttachmentHeights
+ {
+ CGFloat downShiftSoFar = 0;
+ 
+ for (DTCoreTextLayoutLine *oneLine in self.lines)
+ {
+ CGFloat lineShift = 0;
+ if ([oneLine correctAttachmentHeights:&lineShift])
+ {
+ downShiftSoFar += lineShift;
+ }
+ 
+ if (downShiftSoFar>0)
+ {
+ // shift the frame baseline down for the total shift so far
+ CGPoint origin = oneLine.baselineOrigin;
+ origin.y += downShiftSoFar;
+ oneLine.baselineOrigin = origin;
+ 
+ // increase the ascent by the extend needed for this lines attachments
+ oneLine.ascent += lineShift;
+ }
+ }
+ }
+ */
 
 // a bug in CoreText shifts the last line of paragraphs slightly down
 - (void)_correctLineOrigins
