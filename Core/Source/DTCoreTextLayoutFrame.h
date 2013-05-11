@@ -20,7 +20,7 @@
 // the value to use if the height is unknown
 #define CGFLOAT_OPEN_HEIGHT 16777215.0f
 
-typedef void (^DTCoreTextLayoutFrameTextBlockHandler)(DTTextBlock *textBlock, CGRect frame, CGContextRef context, BOOL *shouldDrawDefaultBackground); 
+typedef void (^DTCoreTextLayoutFrameTextBlockHandler)(DTTextBlock *textBlock, CGRect frame, CGContextRef context, BOOL *shouldDrawDefaultBackground);
 
 
 @class DTCoreTextLayouter;
@@ -32,13 +32,13 @@ typedef void (^DTCoreTextLayoutFrameTextBlockHandler)(DTTextBlock *textBlock, CG
  
  The array of lines is built lazily the first time it is accessed or - for open-ended frames - when the frame property is being queried.
  */
-@interface DTCoreTextLayoutFrame : NSObject 
+@interface DTCoreTextLayoutFrame : NSObject
 {
 	CGRect _frame;
-
+  
 	NSArray *_lines;
 	NSArray *_paragraphRanges;
-
+  
 	NSArray *_textAttachments;
 	NSAttributedString *_attributedStringFragment;
 }
@@ -75,13 +75,13 @@ typedef void (^DTCoreTextLayoutFrameTextBlockHandler)(DTTextBlock *textBlock, CG
 
 /**
  The string range that is visible i.e. fits into the given rectangle. For open-ended frames this is typically the entire string. For frame-contrained layout frames it is the substring that fits.
-  */
+ */
 - (NSRange)visibleStringRange;
 
 
 /**
  This is a copy of the attributed string owned by the layouter of the receiver.
-*/
+ */
 - (NSAttributedString *)attributedStringFragment;
 
 
@@ -94,17 +94,7 @@ typedef void (^DTCoreTextLayoutFrameTextBlockHandler)(DTTextBlock *textBlock, CG
 /**
  The frame rectangle for the layout frame.
  */
- @property (nonatomic, assign, readonly) CGRect frame;
-
-
-/**
- Calculates the frame that is covered by the text content.
- 
- The result is calculated by enumerating over all lines and creating a union over all their frames. This is different than the frame property since this gets calculated.
- @returns The area that is covered by the text content.
- @note The width depends on how many glyphs Core Text was able to fit into a line. A line that gets broken might not have glyphs all the way to the margin. The y origin is always adjusted to be the same as frame since the first line might have some leading. The height is the minimum height that fits all layout lines.
- */
-- (CGRect)intrinsicContentFrame;
+@property (nonatomic, assign, readonly) CGRect frame;
 
 
 /**
@@ -125,7 +115,7 @@ typedef void (^DTCoreTextLayoutFrameTextBlockHandler)(DTTextBlock *textBlock, CG
 
 /**
  Set a custom handler to be executed before text belonging to a text block is drawn. Of type <DTCoreTextLayoutFrameTextBlockHandler>.
-*/
+ */
 @property (nonatomic, copy) DTCoreTextLayoutFrameTextBlockHandler textBlockHandler;
 
 
@@ -169,7 +159,7 @@ typedef void (^DTCoreTextLayoutFrameTextBlockHandler)(DTTextBlock *textBlock, CG
  @param rect The rectangle
  @returns An array, sorted from top to bottom, of lines at least partially visible
  */
-- (NSArray *)linesVisibleInRect:(CGRect)rect; 
+- (NSArray *)linesVisibleInRect:(CGRect)rect;
 
 
 /**
@@ -241,12 +231,12 @@ typedef void (^DTCoreTextLayoutFrameTextBlockHandler)(DTTextBlock *textBlock, CG
 - (NSArray *)textAttachmentsWithPredicate:(NSPredicate *)predicate;
 
 
-/** 
+/**
  @name Getting Paragraph Info
  */
 
 
-/** 
+/**
  Finding which paragraph a given string index belongs to.
  
  @param stringIndex The index in the string to look for
@@ -255,7 +245,7 @@ typedef void (^DTCoreTextLayoutFrameTextBlockHandler)(DTTextBlock *textBlock, CG
 - (NSUInteger)paragraphIndexContainingStringIndex:(NSUInteger)stringIndex;
 
 
-/** 
+/**
  Determines the paragraph range (of paragraph indexes) that encompass the entire given string Range.
  
  @param stringRange The string range for which the paragraph range is sought for
@@ -275,7 +265,7 @@ typedef void (^DTCoreTextLayoutFrameTextBlockHandler)(DTTextBlock *textBlock, CG
 
 /**
  An array of `NSRange` values encapsulated in `NSValue` instances. Each range is the string range contained in the corresponding paragraph.
-*/
+ */
 @property (nonatomic, strong, readonly) NSArray *paragraphRanges;
 
 
